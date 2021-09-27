@@ -1,0 +1,84 @@
+https://ostechnix.com/youtube-dl-tutorial-with-examples-for-beginners/
+https://ostechnix.com/20-ffmpeg-commands-beginners/
+
+best - Select the best quality format of the given file with video and audio.
+worst - Select the worst quality format (both video and audio).
+bestvideo - Select the best quality video-only format (e.g. DASH video). Please note that it may not be available.
+worstvideo - Select the worst quality video-only format. May not be available.
+bestaudio - Select the best quality audio only-format. May not be available.
+worstaudio - Select the worst quality audio only-format. May not be available
+youtube-dl -f best https://www.youtube.com/watch?v=7E-cwdnsiow
+
+Ctrl+C to stop
+youtube-dl --list-format url
+youtube-dl -f formatcode url
+youtube-dl -f (formatcode1/formatcode2/formatcode3) url
+youtube-dl -f 2/1
+
+download lossless(flac) audio from youtube (-x is short for --extract-audio)
+youtube-dl -x --audio-format flac url
+
+ffmpeg -i "kittyrave 2021-07-30 18_38-kittyrave.mp4" -ss 00:02:00 -to 00:41:31 -c copy "kittyrave 2021-07-30 18_39-kittyrave.mp4"
+
+//Take thumbnail picture from video
+ffmpeg -i input.mp4 -ss 00:00:01.000 -vframes 1 output.png
+
+//Add thumbnail picture
+ffmpeg -i video.mp4 -i image.png -map 1 -map 0 -c copy -disposition:0 attached_pic out.mp4
+
+//Screen recorder
+ffmpeg -f dshow -i video="UScreenCapture":audio="Microphone" output.mkv
+
+//Make gif from video
+ffmpeg -ss 30 -t 3 -i "input.mp4" -vf "fps=10,scale=1280:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 output.gif
+
+//Concat 2 videos
+ffmpeg -f concat -safe 0 -i mylist.txt -c copy output.mp4
+
+//make video from a image
+ffmpeg -y -loop 1 -framerate 60 -t 1 -i input.jpg -f lavfi -t 1 -i aevalsrc=0 -vf settb=1/60000 -video_track_timescale 60000 -c:v libx264 -pix_fmt yuv420p playervid.mp4
+
+//.bat concat 2 videos
+:: Create File List
+echo file file1.mp4 >  mylist.txt 
+echo file file2.mp4 >> mylist.txt
+echo file file3.mp4 >> mylist.txt
+:: Concatenate Files
+ffmpeg -f concat -i mylist.txt -c copy output.mp4
+
+# with a bash for loop
+for f in *.wav; do echo "file '$f'" >> mylist.txt; done
+# or with printf
+printf "file '%s'\n" *.wav > mylist.txt
+
+(for %i in (*.wav) do @echo file '%i') > mylist.txt
+
+(for %%i in (*.wav) do @echo file '%%i') > mylist.txt
+
+// convert multiple videos
+for %i in (*.ts,*.webm,*.mkv) do ffmpeg -i "%i" -c copy "%~ni.mp4" && del "%i"
+
+for %i in (*.ts,*.webm,*.mkv) do ffmpeg -i "%i" -c copy "newfiles\%~ni.mp4" && del "%i"
+
+for %%i in (*.ts) do (
+    ffmpeg -i "%%i" -c copy "%%~ni.mp4"
+    if %errorlevel%==0 if exist "%%~ni.mp4" del /q "%%i"
+)
+
+for %%i in (*.ts) do (
+    ffmpeg -i "%%i" -c copy "%%~ni.mp4"
+    if not errorlevel 1 if exist "%%~ni.mp4" del /q "%%i"
+)
+
+//Youtube-dl on python
+pip install youtube_dl
+
+//Streamlink on python
+pip install streamlink
+pip uninstall streamlink
+
+//Python upgrade
+pip install --upgrade pip
+
+//List installed python packed
+pip list
